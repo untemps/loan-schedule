@@ -1,6 +1,6 @@
 {
   "name": "@untemps/loan-schedule",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "CLass to generate a schedule of loan payments",
   "repository": "git@github.com:untemps/loan-schedule.git",
   "keywords": [
@@ -51,7 +51,9 @@
     "coverageDirectory": "<rootDir>/coverage/",
     "collectCoverage": true,
     "restoreMocks": true,
-    "testPathIgnorePatterns": ["<rootDir>/dist"]
+    "testPathIgnorePatterns": [
+      "<rootDir>/dist"
+    ]
   },
   "release": {
     "branches": [
