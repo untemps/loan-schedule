@@ -1,0 +1,26 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Rubik, sans-serif;
+    font-size: 14px;
+}
+
+#root {
+    display: grid;
+    grid-template-columns: 70% 1fr;
+    gap: 40px;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+table {
+    border: black solid 1px;
+    border-collapse: collapse;
+}
+
+td {
+    border: black solid 1px;
+    padding: 1em;
+}
