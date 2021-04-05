@@ -1,12 +1,13 @@
 {
   "name": "@untemps/loan-schedule",
   "version": "1.0.0",
-  "description": "CLass to generate a schedule of loan payments",
+  "description": "Class to generate a schedule of loan payments",
   "repository": "git@github.com:untemps/loan-schedule.git",
   "keywords": [
-    "dom",
-    "mutations-observer",
-    "class",
+    "loan",
+    "schedule",
+    "mortgage",
+    "finance",
     "javascript"
   ],
   "author": "Vincent Le Badezet <v.lebadezet@untemps.net>",
