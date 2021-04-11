@@ -1,3 +1,3 @@
-export { default as LoanSchedule } from './LoanSchedule';
-export { default as LoanScheduleYear } from './LoanScheduleYear';
+export { default as LoanSchedule, ILoanSchedule } from './LoanSchedule';
+export { default as LoanScheduleYear, ILoanScheduleYear } from './LoanScheduleYear';
 export { default as ILoanScheduleValue } from './ILoanScheduleValue';
