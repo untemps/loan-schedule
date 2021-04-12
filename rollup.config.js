@@ -1,10 +1,7 @@
-import typescript from '@rollup/plugin-typescript'
-import commonjs from '@rollup/plugin-commonjs'
-import resolve from '@rollup/plugin-node-resolve'
+import ts from '@wessberg/rollup-plugin-ts'
 import filesize from 'rollup-plugin-filesize'
 import { terser } from 'rollup-plugin-terser'
 import visualizer from 'rollup-plugin-visualizer'
-import generateDeclarations from 'rollup-plugin-generate-declarations'
 
 const production = process.env.NODE_ENV === 'production'
 const target = process.env.BABEL_ENV
@@ -22,17 +19,18 @@ export default {
 		sourcemap: 'inline',
 	},
 	plugins: [
-		typescript({
-			tsconfig: 'tsconfig.json',
+		ts({
+			tsconfig: (config) => ({
+				...config,
+				declaration: target === 'cjs',
+				declarationDir: './dist/types',
+				exclude: ['./src/**/*.test.ts'],
+			}),
 		}),
-		resolve(),
-		commonjs(),
-		filesize(),
 		production && terser(),
+		filesize(),
 		visualizer({
-			sourcemap: true,
-			open: true,
+			open: false,
 		}),
-		generateDeclarations()
 	],
 }
