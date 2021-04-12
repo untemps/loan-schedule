@@ -3,21 +3,21 @@ import ILoanScheduleValue from "./ILoanScheduleValue";
 export interface ILoanScheduleYear {
   readonly year: number;
   readonly isBase: boolean;
-  readonly creditValues: Omit<ILoanScheduleValue, 'rate'>[];
-  readonly debitValues: Omit<ILoanScheduleValue, 'rate'>[];
+  readonly creditValues: ILoanScheduleValue[];
+  readonly debitValues: ILoanScheduleValue[];
   readonly balance: number;
 }
 
 export default class LoanScheduleYear implements ILoanScheduleYear {
   readonly year: number;
-  readonly creditValues: Omit<ILoanScheduleValue, 'rate'>[];
-  readonly debitValues: Omit<ILoanScheduleValue, 'rate'>[];
+  readonly creditValues: ILoanScheduleValue[];
+  readonly debitValues: ILoanScheduleValue[];
   readonly isBase: boolean;
 
   constructor(
     year?: number,
-    creditValues?: Omit<ILoanScheduleValue, 'rate'>[],
-    debitValues?: Omit<ILoanScheduleValue, 'rate'>[],
+    creditValues?: ILoanScheduleValue[],
+    debitValues?: ILoanScheduleValue[],
     isBase?: boolean
   ) {
     this.year = year || new Date().getFullYear();
@@ -30,9 +30,9 @@ export default class LoanScheduleYear implements ILoanScheduleYear {
     return this.sum(this.creditValues) - this.sum(this.debitValues);
   }
 
-  private sum(values: Omit<ILoanScheduleValue, 'rate'>[]): number {
+  private sum(values: ILoanScheduleValue[]): number {
     return values.reduce(
-      (acc: number, item: Omit<ILoanScheduleValue, 'rate'>): number => (acc += (item.value || 0)),
+      (acc: number, item: ILoanScheduleValue): number => (acc += (item.value || 0)),
       0
     );
   }
