@@ -1,84 +1,96 @@
-import ILoanScheduleValue from './ILoanScheduleValue'
-import LoanScheduleYear, { ILoanScheduleYear } from './LoanScheduleYear'
+import deepMerge from './utils/deepMerge'
+import LoanScheduleAmortization from './LoanScheduleAmortization'
+import LoanScheduleConfig from './LoanScheduleConfig'
+import LoanScheduleAmortizationType from './LoanScheduleAmortizationType'
+import LoanScheduleYears from './LoanScheduleYears'
+import LoanScheduleSettings from './LoanScheduleSettings'
+import LoanScheduleHeader from './LoanScheduleHeader'
+import LoanScheduleCompute from './LoanScheduleCompute'
+import defaultConfig from './config'
 
 export interface ILoanSchedule {
-	readonly amount: number
-	readonly length: number // In years
-	readonly interestRate: number
-	readonly insuranceRate: number
-	readonly baseYear: number
-	years: ILoanScheduleYear[]
-	getPMT(): number
+	readonly loanSettings: LoanScheduleSettings
+	readonly years: LoanScheduleYears
 }
 
 export default class LoanSchedule implements ILoanSchedule {
-	readonly amount: number
-	readonly length: number // In years
-	readonly interestRate: number
-	readonly insuranceRate: number
-	private readonly creditValues: ILoanScheduleValue[]
-	private readonly debitValues: ILoanScheduleValue[]
-	readonly baseYear: number
+	readonly loanSettings: LoanScheduleSettings
+	private readonly loanAmortizations: LoanScheduleAmortization[]
+	private readonly config: LoanScheduleConfig
 
-	constructor(
-		amount?: number,
-		length?: number,
-		interestRate?: number,
-		insuranceRate?: number,
-		creditValues?: ILoanScheduleValue[],
-		debitValues?: ILoanScheduleValue[],
-		baseYear?: number
-	) {
-		this.amount = amount || 0
-		this.length = length || 0
-		this.interestRate = interestRate || 0
-		this.insuranceRate = insuranceRate || 0
-		this.creditValues = creditValues || []
-		this.debitValues = debitValues || []
-		this.baseYear = baseYear || new Date().getFullYear()
+	constructor(loanSettings?: LoanScheduleSettings, loanAmortizations?: LoanScheduleAmortization[], config?: LoanScheduleConfig) {
+		this.loanSettings = loanSettings
+		this.loanAmortizations = loanAmortizations
+		this.config = deepMerge(config || {}, defaultConfig)
 	}
 
-	get years(): ILoanScheduleYear[] {
-		const y: ILoanScheduleYear[] = []
-		for (let i: number = 0; i < this.length; i++) {
-			y.push(
-				new LoanScheduleYear(
-					this.baseYear + i,
-					this.mapValues(this.creditValues, i),
-					[
-						{
-							label: 'Payment',
-							value: this.getPMT(),
-						},
-						{
-							label: 'Insurance',
-							value: (this.amount * this.insuranceRate) / 100 / 12,
-						},
-						...this.mapValues(this.debitValues, i),
-					],
-					i === 0
-				)
-			)
+	get years(): LoanScheduleYears {
+		return {
+			headers: this.getHeaders(),
+			values: this.getYears(),
 		}
-		return y
 	}
 
-	public getPMT(): number {
-		if (!this.amount || !this.length || !this.interestRate) return 0
-		const rate = this.interestRate / 1200
-		const pvif: number = Math.pow(1 + rate, this.length * 12)
-		return (rate / (pvif - 1)) * (this.amount * pvif)
-	}
-
-	private mapValues(values: ILoanScheduleValue[], index: number): ILoanScheduleValue[] {
-		return values.map((item) => ({
-			...item,
-			value: !!item.rate ? LoanSchedule.getDynamicValue(item.value || 0, item.rate || 0, index) : item.value,
+	private getHeaders(): LoanScheduleHeader[] {
+		const { year: yearHeader, balance: balanceHeader } = this.config.headers
+		const amortizationHeaders: LoanScheduleHeader[] = this.loanAmortizations.map(({ label, type }: LoanScheduleHeader) => ({
+			label,
+			type,
 		}))
+		return [yearHeader, ...amortizationHeaders, balanceHeader]
+	}
+
+	private getYears(): number[][] {
+		const years: number[][] = []
+		for (let i: number = 0; i < this.loanSettings.term; i++) {
+			years.push(this.mapValues(this.loanAmortizations, i))
+		}
+		return years
+	}
+
+	private mapValues(amortizations: LoanScheduleAmortization[], index: number): number[] {
+		const currentYear: number = new Date().getFullYear()
+		let balance: number = 0
+		const res: number[] = amortizations.reduce(
+			(acc: number[], { value, rate, type, compute }: LoanScheduleAmortization) => {
+				!!compute && (value = LoanSchedule.getComputedValue(compute, this.loanSettings))
+				!!rate && (value = LoanSchedule.getDynamicValue(value, rate, index))
+				balance += value * (type === LoanScheduleAmortizationType.CREDIT ? 1 : -1)
+				return [...acc, value]
+			},
+			[currentYear + index]
+		)
+		res.push(balance)
+		return res
+	}
+
+	private static getMonthlyPayment(amount: number, term: number, interestRate: number): number {
+		if (!amount || !term || !interestRate) return 0
+		const rate: number = interestRate / 1200
+		const pvif: number = Math.pow(1 + rate, term * 12)
+		return (rate / (pvif - 1)) * (amount * pvif)
+	}
+
+	private static getMonthlyInsurance(amount: number, insuranceRate: number): number {
+		if (!amount || !insuranceRate) return 0
+		return (amount * insuranceRate) / 100 / 12
 	}
 
 	private static getDynamicValue(baseValue: number, rate: number, index: number): number {
 		if (!baseValue || !rate) return 0
 		return baseValue * Math.pow(1 + rate / 100, index)
+	}
+
+	private static getComputedValue(compute: string, settings: LoanScheduleSettings): number {
+		if (!settings) return 0
+		const { amount, term, interestRate, insuranceRate } = settings
+		switch (compute) {
+			case LoanScheduleCompute.PAYMENT:
+				return LoanSchedule.getMonthlyPayment(amount, term, interestRate)
+			case LoanScheduleCompute.INSURANCE:
+				return LoanSchedule.getMonthlyInsurance(amount, insuranceRate)
+			default:
+				return 0
+		}
 	}
 }

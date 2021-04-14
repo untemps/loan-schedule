@@ -1,59 +1,45 @@
 import './index.css'
 
 const createTable = (rows) => {
-	const table = document.createElement("table");
+	const table = document.createElement('table')
 	rows.forEach((row) => {
-		table.appendChild(row);
-	});
-	return table;
+		table.appendChild(row)
+	})
+	return table
 }
 
-const createCol = (content) => {
-	const col = document.createElement("td");
-	const text = document.createTextNode(content);
-	col.appendChild(text);
-	return col;
+const createCol = (content, className) => {
+	const col = document.createElement('td')
+	!!className && col.setAttribute('class', className)
+	const text = document.createTextNode(content)
+	col.appendChild(text)
+	return col
 }
 
-const createRow = (cols) => {
-	const row = document.createElement("tr");
+const createRow = (cols, className) => {
+	const row = document.createElement('tr')
+	!!className && row.setAttribute('class', className)
 	cols.forEach((col) => {
-		row.appendChild(col);
-	});
-	return row;
+		row.appendChild(col)
+	})
+	return row
 }
 
-export default (data) => {
-	const appEl =
-		document.querySelector("#root") || document.createElement("div");
-	appEl.innerHTML = "";
+export default ({ headers, values }) => {
+	const appEl = document.querySelector('#root') || document.createElement('div')
+	appEl.innerHTML = ''
 
-	const rows = [];
-	const headerCols = [
-		createCol("Year"),
-		...data[0].debitValues.map((item) => createCol(item.label)),
-		...data[0].creditValues.map((item) => createCol(item.label)),
-		createCol("Balance")
-	];
-	const headerRow = createRow(headerCols);
-	rows.push(headerRow);
+	const rows = []
+	const headerCols = headers.map(({ label, type }) => createCol(label, `header${!!type && '-' + type}`))
+	const headerRow = createRow(headerCols, 'header')
+	rows.push(headerRow)
 
-	data.forEach((yearItem) => {
-		const cols = [
-			createCol(yearItem.year.toString()),
-			...yearItem.debitValues.map((item) =>
-				createCol(item.value.toFixed(2))
-			),
-			...yearItem.creditValues.map((item) =>
-				createCol(item.value.toFixed(2))
-			),
-			createCol(yearItem.balance.toFixed(2))
-		];
+	values.forEach((column) => {
+		const cols = column.map((value, i) => createCol(i === 0 ? value : value.toFixed(2), headers[i].type))
+		const row = createRow(cols)
+		rows.push(row)
+	})
 
-		const row = createRow(cols);
-		rows.push(row);
-	});
-
-	const tableEl = createTable(rows);
-	appEl.appendChild(tableEl);
+	const tableEl = createTable(rows)
+	appEl.appendChild(tableEl)
 }

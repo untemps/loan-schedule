@@ -20,7 +20,30 @@ table {
     border-collapse: collapse;
 }
 
+tr.header {
+    background-color: #d7d3d3;
+    font-weight: bold;
+}
+
+td.header-credit {
+    background-color: #8e9864;
+    font-weight: bold;
+}
+
+td.header-debit {
+    background-color: #8c826b;
+    font-weight: bold;
+}
+
 td {
     border: black solid 1px;
     padding: 1em;
+}
+
+td.credit {
+    background-color: #d2d9b6;
+}
+
+td.debit {
+    background-color: #b5ad9b;
 }

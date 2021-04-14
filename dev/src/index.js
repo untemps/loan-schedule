@@ -1,29 +1,53 @@
-import { LoanSchedule } from '../../dist'
+import { LoanSchedule, LoanScheduleCompute, LoanScheduleAmortizationType } from '../../dist'
 
 import draw from './draw'
 
 const schedule = new LoanSchedule(
-	79950,
-	25,
-	2,
-	0.5,
+	{
+		amount: 79950,
+		term: 25,
+		interestRate: 2,
+		insuranceRate: 0.5,
+	},
 	[
 		{
-			label: "Rent",
-			value: 600
-		}
-	],
-	[
-		{
-			label: "Property Tax",
-			value: 30,
-			rate: 5
+			label: 'Loyer',
+			value: 600,
+			type: LoanScheduleAmortizationType.CREDIT,
 		},
 		{
-			label: "Condominium Fees",
+			label: 'Mensualité',
+			type: LoanScheduleAmortizationType.DEBIT,
+			compute: LoanScheduleCompute.PAYMENT,
+		},
+		{
+			label: 'Assurance',
+			type: LoanScheduleAmortizationType.DEBIT,
+			compute: LoanScheduleCompute.INSURANCE,
+		},
+		{
+			label: 'Taxe foncière',
+			value: 30,
+			rate: 5,
+			type: LoanScheduleAmortizationType.DEBIT,
+		},
+		{
+			label: 'Charges de copro',
 			value: 40,
-			rate: 5
-		}
-	]
-);
-draw(schedule.years);
+			rate: 5,
+			type: LoanScheduleAmortizationType.DEBIT,
+		},
+	],
+	{
+		headers: {
+			year: {
+				label: 'Année',
+			},
+			balance: {
+				label: 'Solde',
+			},
+		},
+	}
+)
+console.log(schedule.years)
+draw(schedule.years)
