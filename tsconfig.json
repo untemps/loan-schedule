@@ -1,7 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "allowSyntheticDefaultImports": true,
-    "allowJs": true
-  }
+	"compilerOptions": {
+		"target": "esnext",
+		"allowSyntheticDefaultImports": true,
+		"allowJs": true,
+		"pretty": true
+	}
 }
