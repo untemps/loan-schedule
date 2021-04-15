@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/untemps/loan-schedule/compare/v2.0.0...v2.1.0) (2021-04-15)
+
+
+### Features
+
+* Export LoanScheduleYears type ([299eca7](https://github.com/untemps/loan-schedule/commit/299eca71b4377de3622c6a9e38b239b02cae5cca))
+
 # [2.0.0](https://github.com/untemps/loan-schedule/compare/v1.0.1...v2.0.0) (2021-04-14)
 
 
