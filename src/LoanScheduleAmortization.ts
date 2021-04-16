@@ -1,11 +1,12 @@
 import LoanScheduleAmortizationType from './LoanScheduleAmortizationType'
+import LoanScheduleCompute from './LoanScheduleCompute'
 
 type LoanScheduleAmortization = {
 	label?: string
 	value?: number
 	rate?: number
 	type?: LoanScheduleAmortizationType,
-	compute?: string
+	compute?: LoanScheduleCompute
 }
 
 export default LoanScheduleAmortization
