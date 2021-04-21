@@ -4,27 +4,31 @@ import filesize from 'rollup-plugin-filesize'
 import visualizer from 'rollup-plugin-visualizer'
 
 const production = process.env.NODE_ENV === 'production'
-const target = process.env.BABEL_ENV
 
 export default {
 	input: 'src/index.ts',
-	output: {
-		name: 'loan-schedule',
-		file: {
-			cjs: 'dist/index.js',
-			es: 'dist/index.es.js',
-			umd: 'dist/index.umd.js',
-		}[target],
-		format: target,
-		sourcemap: 'inline',
-	},
+	output: [
+		{
+			name: 'loan-schedule',
+			file: 'dist/index.js',
+			format: 'cjs',
+			sourcemap: 'inline',
+		},
+		{
+			name: 'loan-schedule',
+			file: 'dist/index.es.js',
+			format: 'es',
+			sourcemap: 'inline',
+		},
+		{
+			name: 'loan-schedule',
+			file: 'dist/index.umd.js',
+			format: 'umd',
+			sourcemap: 'inline',
+		},
+	],
 	plugins: [
-		typescript({
-			tsconfig: (config) => ({
-				...config,
-				declaration: target === 'cjs'
-			}),
-		}),
+		typescript(),
 		production && terser(),
 		filesize(),
 		visualizer({
