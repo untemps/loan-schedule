@@ -40,6 +40,7 @@
 		"semantic-release": "^17.0.7",
 		"ts-jest": "^26.5.4",
 		"tslib": "^2.1.0",
+		"typedoc": "^0.20.35",
 		"typescript": "^4.2.3"
 	},
 	"husky": {
@@ -86,10 +87,9 @@
 		"test": "jest -u --watchAll",
 		"test:ci": "CI=true jest -u -b --coverage",
 		"prebuild": "rimraf dist",
-		"build": "yarn build:cjs && yarn build:es && yarn build:umd",
-		"build:cjs": "cross-env NODE_ENV=production BABEL_ENV=cjs rollup -c",
-		"build:es": "cross-env NODE_ENV=production BABEL_ENV=es rollup -c",
-		"build:umd": "cross-env NODE_ENV=production BABEL_ENV=umd rollup -c",
-		"prettier": "prettier \"*/**/*.js\" --ignore-path ./.prettierignore --write"
+		"build": "cross-env NODE_ENV=production rollup -c",
+		"postbuild": "yarn typedoc",
+		"prettier": "prettier \"*/**/*.js\" --ignore-path ./.prettierignore --write",
+		"typedoc": "typedoc"
 	}
 }

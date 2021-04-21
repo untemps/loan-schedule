@@ -1,0 +1,8 @@
+{
+	"name": "@untemps/loan-schedule",
+	"entryPoints": ["src/index.ts"],
+	"out": "dist/docs",
+	"theme": "minimal",
+	"readme": "README.md",
+	"includeVersion": true
+}
