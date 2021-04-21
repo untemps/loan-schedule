@@ -1,6 +1,6 @@
-import ts from '@wessberg/rollup-plugin-ts'
-import filesize from 'rollup-plugin-filesize'
+import typescript from '@wessberg/rollup-plugin-ts'
 import { terser } from 'rollup-plugin-terser'
+import filesize from 'rollup-plugin-filesize'
 import visualizer from 'rollup-plugin-visualizer'
 
 const production = process.env.NODE_ENV === 'production'
@@ -19,12 +19,10 @@ export default {
 		sourcemap: 'inline',
 	},
 	plugins: [
-		ts({
+		typescript({
 			tsconfig: (config) => ({
 				...config,
-				declaration: target === 'cjs',
-				declarationDir: './dist/types',
-				exclude: ['./src/**/*.test.ts'],
+				declaration: target === 'cjs'
 			}),
 		}),
 		production && terser(),
