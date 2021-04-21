@@ -1,6 +1,6 @@
 {
 	"name": "@untemps/loan-schedule",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "Class to generate a schedule of loan payments",
 	"repository": "git@github.com:untemps/loan-schedule.git",
 	"keywords": [
